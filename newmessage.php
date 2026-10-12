@@ -1,10 +1,12 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
 session_start();
 $username = $_SESSION['username'];
 $team = $_SESSION['team'];
 if(isset($_POST['message']))
 {
+	csrf_verify();
 	$link = db_connect();
 	$message = $_POST['message'];
 	$username = $_SESSION['username'];
@@ -16,6 +18,7 @@ mysqli_close($link);
 echo'<html>';
 echo'<head></head><body>';
 echo'<form action="newmessage.php" method="post">';
+echo csrf_field();
 echo'<input type="text" name="message" size="100"/>';
 echo'<input type="submit" name="Send"/>';
 echo'</form>';

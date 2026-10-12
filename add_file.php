@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
 session_start();
 if (!isset($_SESSION['username'])) {
 header('Location: displayteam.php');
@@ -9,6 +10,7 @@ $username = $_SESSION['username'];
 $team = $_SESSION["team"];
 // Check if a file has been uploaded
 if(isset($_FILES['uploaded_file'])) {
+    csrf_verify();
     // Make sure the file was sent without errors
     if($_FILES['uploaded_file']['error'] == 0) {
         // Connect to the database

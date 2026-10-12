@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
 // Connect to the database
 session_start();
 if (!isset($_SESSION['username'])) {
@@ -390,6 +391,7 @@ $dbLink->close();
 </h4>
 <h3><b> Add Files in the Group to share!</b>
 <form action="add_file.php" method="post" enctype="multipart/form-data">
+        <?php echo csrf_field(); ?>
         <input type="file" name="uploaded_file"><br>
         <input type="submit" value="Upload file">
     </form>

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/csrf.php';
 session_start();
 if (!isset($_SESSION['username'])) {
 header('Location: join.php');
@@ -326,6 +327,7 @@ h3 {
 </style>
 <h3>
 <form method="post" action="joined.php">
+<?php echo csrf_field(); ?>
 Team Name:<input type="text" name="team"/><br/><br/>
 <input type="submit" name="submit" value="Join/Create"/>
 

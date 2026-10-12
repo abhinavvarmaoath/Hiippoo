@@ -1,12 +1,14 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
 session_start();
-$username = $_SESSION['username'];
-$team=$_POST['team'];
 if (!isset($_SESSION['username'])) {
 header('Location: joined.php');
 exit;
 }
+csrf_verify();
+$username = $_SESSION['username'];
+$team=$_POST['team'];
 $dbLink = db_connect();
 $stmt = $dbLink->prepare("INSERT INTO `team` (`username`,`team`) VALUES (?,?)");
 $stmt->bind_param('ss', $username, $team);
