@@ -1,14 +1,12 @@
 <?php
-session_start(); 
+require_once __DIR__ . '/db.php';
+session_start();
 $username = $_SESSION['username'];
 $team=$_POST['team'];
 if (!isset($_SESSION['username'])) {
 header('Location: created.php');
 }
-$dbLink = new mysqli('localhost', 'abhi7565', 'Qweasdzxc1', 'abregdb');
-        if(mysqli_connect_errno()) {
-            die("MySQL connection failed: ". mysqli_connect_error());
-        }
+$dbLink = db_connect();
 $query1 = "INSERT INTO `team` (`username`,`team`) VALUES ('{$username}','{$team}')";
         // Execute the query
  $result1 = $dbLink->query($query1);

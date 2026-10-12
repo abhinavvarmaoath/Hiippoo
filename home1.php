@@ -1,20 +1,11 @@
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
 header('Location: home1.php');
 }
-$servername = "localhost";
-$uname = "abhi7565";
-$password = "Qweasdzxc1";
-$dbname = "abregdb";
-
-// Create connection
-$conn = new mysqli($servername, $uname, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
+$conn = db_connect();
 
 $sql = "SELECT email, education, university FROM enc where username = '$username'";
 $result = $conn->query($sql);

@@ -1,13 +1,11 @@
 <?php
+require_once __DIR__ . '/db.php';
 // Connect to the database
 session_start();
 $username = $_SESSION['username'];
 $team = $_GET["teamid"];
 $_SESSION['team'] = $team;
-$dbLink = new mysqli('localhost', 'abhi7565', 'Qweasdzxc1', 'abregdb');
-if(mysqli_connect_errno()) {
-    die("MySQL connection failed: ". mysqli_connect_error());
-}
+$dbLink = db_connect();
  
 // Query for a list of all existing files
 $sql = "SELECT username,id, name, mime, size, created FROM file where team = '$team'";

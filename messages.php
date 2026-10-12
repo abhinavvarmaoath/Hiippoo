@@ -5,15 +5,11 @@
 </head>
 <body>
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
 $username = $_SESSION['username'];
 $team = $_SESSION['team'];
-$link = mysqli_connect('localhost','abhi7565','Qweasdzxc1','abregdb'); 
-    if(!$link)
-	{
-		die('could not connect: '.mysql_error());}
-	else
-	{}
+$link = db_connect();
 	$query = "select * from messages where team = '$team'";
 	if($result = mysqli_query($link, $query)){
 		while($row = mysqli_fetch_row($result))

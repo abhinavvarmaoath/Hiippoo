@@ -1,23 +1,17 @@
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
-header('Location: emailsent.php');	   
+header('Location: emailsent.php');
 }
-$servername = "localhost";
-$uname = "abhi7565";
-$password = "Qweasdzxc1";
-$dbname = "abregdb";
-$conn = new mysqli($servername, $uname, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-     die("Connection failed: " . $conn->connect_error);
-} 
+$conn = db_connect();
 $email    = $_POST[email];
 $subject = $_POST[subject];
 $message = $_POST[message];
-$headers = 'From: abhinav1730@gmail.com' . "\r\n" .
-    'Reply-To: abhinav1730@gmail.com' . "\r\n" .
+$from = getenv('CONTACT_FROM_EMAIL') ?: 'noreply@example.com';
+$headers = 'From: ' . $from . "\r\n" .
+    'Reply-To: ' . $from . "\r\n" .
     'X-Mailer: PHP/' . phpversion();
 $result =mail($email, $subject, $message, $headers);
      

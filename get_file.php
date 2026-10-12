@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 // Make sure an ID was passed
 if(isset($_GET['id'])) {
 // Get the ID
@@ -10,11 +11,8 @@ if(isset($_GET['id'])) {
     }
     else {
         // Connect to the database
-       $dbLink = new mysqli('localhost', 'abhi7565', 'Qweasdzxc1', 'abregdb');
-        if(mysqli_connect_errno()) {
-            die("MySQL connection failed: ". mysqli_connect_error());
-        }
- 
+        $dbLink = db_connect();
+
         // Fetch the file information
         $query = "
             SELECT `mime`, `name`, `size`, `data`

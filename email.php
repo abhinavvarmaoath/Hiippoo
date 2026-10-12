@@ -343,14 +343,14 @@ header('Location: join.php');
 <ul><input type="text" name="message" size="100" /></ul>
 <ul><label for="email">Your Service Provider or Institution:</label></ul>
 <ul><select name="email">
-<option value="kaikai.liu@sjsu.edu">Prof. Kaikai liu</option>
-<option value="abhinavvarma7565@gmail.com">AT&T</option>
-<option value="abhinav1730@gmail.com">Apple support</option>
-<option value="abhinav1730@gmail.com">DELL</option>
-<option value="abhinav1730@gmail.com">SJSU Student Union</option>
-<option value="abhinav1730@gmail.com">Panda Express</option>
-<option value="abhinav1730@gmail.com">Health Centre</option>
-<option value="abhinav1730@gmail.com">Fitness Centre</option>
+<option value="prof@example.edu">Prof. Kaikai liu</option>
+<option value="support@example.com">AT&T</option>
+<option value="support@example.com">Apple support</option>
+<option value="support@example.com">DELL</option>
+<option value="support@example.com">SJSU Student Union</option>
+<option value="support@example.com">Panda Express</option>
+<option value="support@example.com">Health Centre</option>
+<option value="support@example.com">Fitness Centre</option>
 </select></ul>
 
 

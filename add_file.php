@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
 $username = $_SESSION['username'];
 $team = $_SESSION["team"];
@@ -7,11 +8,8 @@ if(isset($_FILES['uploaded_file'])) {
     // Make sure the file was sent without errors
     if($_FILES['uploaded_file']['error'] == 0) {
         // Connect to the database
-        $dbLink = new mysqli('localhost', 'abhi7565', 'Qweasdzxc1', 'abregdb');
-        if(mysqli_connect_errno()) {
-            die("MySQL connection failed: ". mysqli_connect_error());
-        }
- 
+        $dbLink = db_connect();
+
         // Gather all required data
         $name = $dbLink->real_escape_string($_FILES['uploaded_file']['name']);
         $mime = $dbLink->real_escape_string($_FILES['uploaded_file']['type']);
