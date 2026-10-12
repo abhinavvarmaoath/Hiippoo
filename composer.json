@@ -10,6 +10,11 @@
         "phpunit/phpunit": "^12.5",
         "phpstan/phpstan": "^2.3"
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "lint": "for f in $(git ls-files '*.php'); do php -l \"$f\" || exit 1; done",
         "stan": "phpstan analyse",

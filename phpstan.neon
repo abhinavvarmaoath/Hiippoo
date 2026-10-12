@@ -1,0 +1,8 @@
+parameters:
+    level: 2
+    paths:
+        - .
+    excludePaths:
+        - assets/*
+        - vendor/*
+        - tests/*
