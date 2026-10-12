@@ -17,16 +17,16 @@ if(isset($_FILES['uploaded_file'])) {
         $dbLink = db_connect();
 
         // Gather all required data
-        $name = $dbLink->real_escape_string($_FILES['uploaded_file']['name']);
-        $mime = $dbLink->real_escape_string($_FILES['uploaded_file']['type']);
-        $data = $dbLink->real_escape_string(file_get_contents($_FILES  ['uploaded_file']['tmp_name']));
+        $name = $_FILES['uploaded_file']['name'];
+        $mime = $_FILES['uploaded_file']['type'];
+        $data = file_get_contents($_FILES['uploaded_file']['tmp_name']);
         $size = intval($_FILES['uploaded_file']['size']);
         $username = $_SESSION["username"];
         
 
         // Create the SQL query
         $stmt = $dbLink->prepare("INSERT INTO `file` (`username`,`team`,`name`, `mime`, `size`, `data`, `created`) VALUES (?,?,?,?,?,?,NOW())");
-        $stmt->bind_param('sssssb', $username, $team, $name, $mime, $size, $data);
+        $stmt->bind_param('ssssss', $username, $team, $name, $mime, $size, $data);
 
         // Execute the query
         $result = $stmt->execute();
