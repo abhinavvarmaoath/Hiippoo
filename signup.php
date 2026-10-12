@@ -5,7 +5,7 @@ $conn = db_connect();
        global $conn;
        $username = $_POST['username'];
        $password = $_POST['password'];
-       $password = md5($password);
+       $password = password_hash($password, PASSWORD_ARGON2ID);
        $email = $_POST['email'];
        $education = $_POST['education'];
        $university = $_POST['university'];

@@ -4,18 +4,21 @@ session_start();
 date_default_timezone_set("America/Los_Angeles");
 $time = date('Y/m/d g:i:s A');
 $conn = db_connect();
-$res = false;
+$row = false;
 if(isset($_POST['username']))
 {
 	$username=$_POST['username'];
 	$password=$_POST['password'];
-        $password = md5($password);
-	$stmt = $conn->prepare("SELECT * FROM enc WHERE username=? AND password=? LIMIT 1");
-	$stmt->bind_param('ss', $username, $password);
+	$stmt = $conn->prepare("SELECT * FROM enc WHERE username=? LIMIT 1");
+	$stmt->bind_param('s', $username);
 	$stmt->execute();
 	$res = $stmt->get_result();
+	$row = $res->fetch_assoc();
+	if ($row && !password_verify($password, $row['password'])) {
+	    $row = false;
+	}
 }
-	if($res && $res->num_rows==1)
+	if($row)
  {
 // Set username session variable
 $_SESSION['username'] = $username;

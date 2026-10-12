@@ -2,9 +2,8 @@
 --
 -- No schema file existed anywhere in the repo; this is reverse-engineered
 -- from the queries in the PHP code and verified by running the app against
--- it. Column sizes match what the code currently sends (e.g. `password` is
--- CHAR(32) because the app currently stores raw MD5 hex digests); widen
--- that if/when the password hashing migration lands.
+-- it. `password` is VARCHAR(255) to hold a password_hash() (Argon2id)
+-- string; earlier revisions of this file sized it for raw MD5 hex.
 --
 -- utf8mb4 is used throughout since this is a new schema file with no
 -- existing data to preserve, and it's the current default recommendation
@@ -16,7 +15,7 @@ USE hiippoo;
 CREATE TABLE enc (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(64) NOT NULL,
-    password CHAR(32) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     email VARCHAR(128) NOT NULL,
     education VARCHAR(128) NOT NULL,
     university VARCHAR(128) NOT NULL
