@@ -286,14 +286,6 @@ header('Location: games.php');
                           <li><a class="" href="displaychat.php">Chat with Teams</a></li>
                       </ul>
                   </li>
-                  <li class="sub-menu">
-                      <a href="javascript:;" class="">
-                          <i class="icon_phone"></i>Audio/Video call<span class="menu-arrow arrow_carrot-right"></span>
-                      </a>
-                      <ul class="sub">
-                          <li><a class="" href="videocall.php">Audio/Video call</a></li>
-                      </ul>
-                  </li>
                    <li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="icon_mail"></i>Get in touch<span class="menu-arrow arrow_carrot-right"></span>
