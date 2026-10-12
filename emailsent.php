@@ -344,9 +344,8 @@ if(!$result) {
 </style>
       
       <!--main content start-->
-<h3> <?php 
-$result =mail($email, $subject, $message, $headers);
-if(!$result) {   
+<h3> <?php
+if(!$result) {
      echo "Error";   
 } else {
     echo "Your mail request has been sent please let us get back to you. Thank you for being patient.";
