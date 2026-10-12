@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/db.php';
 session_start();
+if (!isset($_SESSION['username'])) {
+header('Location: displayteam.php');
+exit;
+}
 $username = $_SESSION['username'];
 $team = $_SESSION["team"];
 // Check if a file has been uploaded

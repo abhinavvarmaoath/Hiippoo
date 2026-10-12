@@ -1,12 +1,18 @@
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
-$username = $_SESSION['username'];
-$teamid = $_GET['teamid'];
-$_SESSION["team"] = $teamid;
 if (!isset($_SESSION['username'])) {
 header('Location: chatroom1.php');
 exit;
 }
+$username = $_SESSION['username'];
+$teamid = $_GET['teamid'];
+$conn = db_connect();
+$member = $conn->query("SELECT 1 FROM team WHERE username = '" . $conn->real_escape_string($username) . "' AND team = '" . $conn->real_escape_string($teamid) . "'");
+if (!$member || $member->num_rows == 0) {
+    die('Error! You are not a member of that team.');
+}
+$_SESSION["team"] = $teamid;
 ?>
 <!DOCTYPE html>
 <html lang="en">

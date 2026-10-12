@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/db.php';
+session_start();
+if (!isset($_SESSION['username'])) {
+header('Location: displayteam.php');
+exit;
+}
 // Make sure an ID was passed
 if(isset($_GET['id'])) {
 // Get the ID
@@ -15,17 +20,22 @@ if(isset($_GET['id'])) {
 
         // Fetch the file information
         $query = "
-            SELECT `mime`, `name`, `size`, `data`
+            SELECT `mime`, `name`, `size`, `data`, `team`
             FROM `file`
             WHERE `id` = {$id}";
         $result = $dbLink->query($query);
- 
+
         if($result) {
             // Make sure the result is valid
             if($result->num_rows == 1) {
             // Get the row
                 $row = mysqli_fetch_assoc($result);
- 
+
+                $member = $dbLink->query("SELECT 1 FROM team WHERE username = '" . $dbLink->real_escape_string($_SESSION['username']) . "' AND team = '" . $dbLink->real_escape_string($row['team']) . "'");
+                if (!$member || $member->num_rows == 0) {
+                    die('Error! You are not a member of that file\'s team.');
+                }
+
                 // Print headers
                 header("Content-Type: ". $row['mime']);
                 header("Content-Length: ". $row['size']);

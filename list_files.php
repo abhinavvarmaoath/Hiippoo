@@ -2,11 +2,19 @@
 require_once __DIR__ . '/db.php';
 // Connect to the database
 session_start();
+if (!isset($_SESSION['username'])) {
+header('Location: displayteam.php');
+exit;
+}
 $username = $_SESSION['username'];
 $team = $_GET["teamid"];
-$_SESSION['team'] = $team;
 $dbLink = db_connect();
- 
+$member = $dbLink->query("SELECT 1 FROM team WHERE username = '" . $dbLink->real_escape_string($username) . "' AND team = '" . $dbLink->real_escape_string($team) . "'");
+if (!$member || $member->num_rows == 0) {
+    die('Error! You are not a member of that team.');
+}
+$_SESSION['team'] = $team;
+
 // Query for a list of all existing files
 $sql = "SELECT username,id, name, mime, size, created FROM file where team = '$team'";
 $result = $dbLink->query($sql);
