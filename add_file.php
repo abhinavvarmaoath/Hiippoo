@@ -252,7 +252,7 @@ if(isset($_FILES['uploaded_file'])) {
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo $username; ?></span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($username); ?></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">

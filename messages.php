@@ -16,7 +16,7 @@ $link = db_connect();
 	if($result = $stmt->get_result()){
 		while($row = mysqli_fetch_row($result))
 		{
-			echo $row['3'].':'.$row['1'].'</br>';
+			echo htmlspecialchars($row['3']).':'.htmlspecialchars($row['1']).'</br>';
 		}
 		mysqli_free_result($result);
 	}

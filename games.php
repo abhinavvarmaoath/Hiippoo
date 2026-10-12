@@ -227,7 +227,7 @@ exit;
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo $username; ?></span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($username); ?></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
@@ -348,7 +348,7 @@ h3 {
 </style>
       
       <!--main content start-->
-<h1> Welcome to HIIPPOO Gaming     <?php echo$username;?></h1><p></p><p></p><h2>
+<h1> Welcome to HIIPPOO Gaming     <?php echo htmlspecialchars($username);?></h1><p></p><p></p><h2>
 <div class="miniclip-game-embed" data-game-name="supercar-showdown" data-theme="0" data-width="800" data-height="600" data-language="en"><a href="http://www.miniclip.com/games/supercar-showdown/"></a></div><p>
 <p style="text-align:center;"><a href="http://www.miniclip.com/games/supercar-showdown/" target="_blank"></a> / More <a href="http://www.miniclip.com/games/genre-477/" target="_blank">Racing games</a></p></h2></p>
 <h3><div class="miniclip-game-embed" data-game-name="cut-the-rope-time-travel" data-theme="0" data-width="1024" data-height="576" data-language="en"><a href="http://www.miniclip.com/games/cut-the-rope-time-travel/">Play Cut the Rope Time Travel</a></div>

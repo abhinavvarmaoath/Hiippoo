@@ -243,7 +243,7 @@ $result = $stmt->get_result();
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo $username; ?></span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($username); ?></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
@@ -361,9 +361,9 @@ if($result) {
         // Print each file
         while($row = $result->fetch_assoc()) {
             echo "
-                <tr><td>{$row['username']}</td>
-                    <td>{$row['name']}</td>
-                    <td>{$row['mime']}</td>
+                <tr><td>" . htmlspecialchars($row['username']) . "</td>
+                    <td>" . htmlspecialchars($row['name']) . "</td>
+                    <td>" . htmlspecialchars($row['mime']) . "</td>
                     <td>{$row['size']}</td>
                     <td>{$row['created']}</td>
                     <td><a href='get_file.php?id={$row['id']}'>Download</a></td>

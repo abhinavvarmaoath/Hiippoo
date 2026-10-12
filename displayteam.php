@@ -240,7 +240,7 @@ $result = $stmt->get_result();
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo $username; ?></span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($username); ?></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
@@ -345,10 +345,10 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
      // output data of each row
      while($row = $result->fetch_assoc()) {
-         echo "<br> Team:" . $row["team"] . "</br>";
+         echo "<br> Team:" . htmlspecialchars($row["team"]) . "</br>";
          $teamid = $row["team"];
 
-echo " <td><a href='list_files.php?teamid=$teamid'>SELECT</a></td>
+echo " <td><a href='list_files.php?teamid=" . urlencode($teamid) . "'>SELECT</a></td>
                 </tr>";
      }
 } else {

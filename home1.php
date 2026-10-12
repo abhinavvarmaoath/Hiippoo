@@ -235,7 +235,7 @@ $result = $stmt->get_result();
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo $username; ?></span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($username); ?></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
@@ -346,13 +346,13 @@ h2 {
 </style>
       
       <!--main content start-->
-<h1> Welcome to HIIPPOO,     <?php echo$username;?></h1>
+<h1> Welcome to HIIPPOO,     <?php echo htmlspecialchars($username);?></h1>
 <p>
 <h2>
 <?php if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "email: " . $row["email"]. " - Education: " . $row["education"]. " " . $row["university"]. "<br>";
+        echo "email: " . htmlspecialchars($row["email"]). " - Education: " . htmlspecialchars($row["education"]). " " . htmlspecialchars($row["university"]). "<br>";
     }
 } else {
     echo "0 results";
