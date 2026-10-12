@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: test-root-password
+          MARIADB_DATABASE: hiippoo
+          MARIADB_USER: hiippoo
+          MARIADB_PASSWORD: test-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli
+          tools: composer
+
+      - run: composer install --no-interaction --prefer-dist
+
+      - name: Load schema
+        run: mariadb -h127.0.0.1 -uroot -ptest-root-password < schema.sql
+
+      - run: composer run lint
+
+      - run: composer run stan
+
+      - name: Run tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_NAME: hiippoo
+          DB_USER: hiippoo
+          DB_PASSWORD: test-password
+        run: composer run test
