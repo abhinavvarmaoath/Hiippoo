@@ -6,9 +6,9 @@ if (!isset($_SESSION['username'])) {
 header('Location: emailsent.php');
 }
 $conn = db_connect();
-$email    = $_POST[email];
-$subject = $_POST[subject];
-$message = $_POST[message];
+$email    = $_POST['email'];
+$subject = $_POST['subject'];
+$message = $_POST['message'];
 $from = getenv('CONTACT_FROM_EMAIL') ?: 'noreply@example.com';
 $headers = 'From: ' . $from . "\r\n" .
     'Reply-To: ' . $from . "\r\n" .
