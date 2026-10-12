@@ -8,9 +8,10 @@ header('Location: created.php');
 exit;
 }
 $dbLink = db_connect();
-$query1 = "INSERT INTO `team` (`username`,`team`) VALUES ('{$username}','{$team}')";
+$stmt = $dbLink->prepare("INSERT INTO `team` (`username`,`team`) VALUES (?,?)");
+$stmt->bind_param('ss', $username, $team);
         // Execute the query
- $result1 = $dbLink->query($query1);
+ $result1 = $stmt->execute();
 ?>
 
 <!DOCTYPE html>

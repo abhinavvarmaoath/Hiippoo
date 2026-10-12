@@ -31,7 +31,10 @@ if(isset($_GET['id'])) {
             // Get the row
                 $row = mysqli_fetch_assoc($result);
 
-                $member = $dbLink->query("SELECT 1 FROM team WHERE username = '" . $dbLink->real_escape_string($_SESSION['username']) . "' AND team = '" . $dbLink->real_escape_string($row['team']) . "'");
+                $memberStmt = $dbLink->prepare("SELECT 1 FROM team WHERE username = ? AND team = ?");
+                $memberStmt->bind_param('ss', $_SESSION['username'], $row['team']);
+                $memberStmt->execute();
+                $member = $memberStmt->get_result();
                 if (!$member || $member->num_rows == 0) {
                     die('Error! You are not a member of that file\'s team.');
                 }

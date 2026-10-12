@@ -10,16 +10,19 @@ if(isset($_POST['username']))
 	$username=$_POST['username'];
 	$password=$_POST['password'];
         $password = md5($password);
-	$sql="SELECT * FROM enc WHERE username='".$username."' AND password='".$password."' LIMIT 1";
-	$res=$conn->query($sql);
+	$stmt = $conn->prepare("SELECT * FROM enc WHERE username=? AND password=? LIMIT 1");
+	$stmt->bind_param('ss', $username, $password);
+	$stmt->execute();
+	$res = $stmt->get_result();
 }
 	if($res && $res->num_rows==1)
  {
 // Set username session variable
 $_SESSION['username'] = $username;
 
-$query = "INSERT INTO log (username,time) VALUES ('$username','$time')";
-       $data = $conn->query($query) or die($conn->error);
+$stmt = $conn->prepare("INSERT INTO log (username,time) VALUES (?,?)");
+       $stmt->bind_param('ss', $username, $time);
+       $data = $stmt->execute() or die($conn->error);
 
  header('Location: home1.php');
 }

@@ -8,7 +8,10 @@ exit;
 $username = $_SESSION['username'];
 $teamid = $_GET['teamid'];
 $conn = db_connect();
-$member = $conn->query("SELECT 1 FROM team WHERE username = '" . $conn->real_escape_string($username) . "' AND team = '" . $conn->real_escape_string($teamid) . "'");
+$memberStmt = $conn->prepare("SELECT 1 FROM team WHERE username = ? AND team = ?");
+$memberStmt->bind_param('ss', $username, $teamid);
+$memberStmt->execute();
+$member = $memberStmt->get_result();
 if (!$member || $member->num_rows == 0) {
     die('Error! You are not a member of that team.');
 }

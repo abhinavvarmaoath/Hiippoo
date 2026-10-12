@@ -10,8 +10,10 @@ session_start();
 $username = $_SESSION['username'];
 $team = $_SESSION['team'];
 $link = db_connect();
-	$query = "select * from messages where team = '$team'";
-	if($result = mysqli_query($link, $query)){
+	$stmt = $link->prepare("select * from messages where team = ?");
+	$stmt->bind_param('s', $team);
+	$stmt->execute();
+	if($result = $stmt->get_result()){
 		while($row = mysqli_fetch_row($result))
 		{
 			echo $row['3'].':'.$row['1'].'</br>';

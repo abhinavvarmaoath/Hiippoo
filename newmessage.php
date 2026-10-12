@@ -6,10 +6,11 @@ $team = $_SESSION['team'];
 if(isset($_POST['message']))
 {
 	$link = db_connect();
-	$message = mysqli_real_escape_string($link,$_POST['message']);
-	$username = mysqli_real_escape_string($link,$_SESSION['username']);
-$sql = "insert into messages (message, username, team) values('$message', '$username', '$team')";
-$result = mysqli_query($link,$sql);
+	$message = $_POST['message'];
+	$username = $_SESSION['username'];
+$stmt = $link->prepare("insert into messages (message, username, team) values(?, ?, ?)");
+$stmt->bind_param('sss', $message, $username, $team);
+$result = $stmt->execute();
 mysqli_close($link);
 }
 echo'<html>';

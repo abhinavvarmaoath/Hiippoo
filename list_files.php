@@ -9,15 +9,20 @@ exit;
 $username = $_SESSION['username'];
 $team = $_GET["teamid"];
 $dbLink = db_connect();
-$member = $dbLink->query("SELECT 1 FROM team WHERE username = '" . $dbLink->real_escape_string($username) . "' AND team = '" . $dbLink->real_escape_string($team) . "'");
+$memberStmt = $dbLink->prepare("SELECT 1 FROM team WHERE username = ? AND team = ?");
+$memberStmt->bind_param('ss', $username, $team);
+$memberStmt->execute();
+$member = $memberStmt->get_result();
 if (!$member || $member->num_rows == 0) {
     die('Error! You are not a member of that team.');
 }
 $_SESSION['team'] = $team;
 
 // Query for a list of all existing files
-$sql = "SELECT username,id, name, mime, size, created FROM file where team = '$team'";
-$result = $dbLink->query($sql);
+$stmt = $dbLink->prepare("SELECT username,id, name, mime, size, created FROM file where team = ?");
+$stmt->bind_param('s', $team);
+$stmt->execute();
+$result = $stmt->get_result();
  ?>
 <!DOCTYPE html>
 <html lang="en">

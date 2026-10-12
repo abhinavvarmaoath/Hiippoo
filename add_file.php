@@ -23,10 +23,11 @@ if(isset($_FILES['uploaded_file'])) {
         
 
         // Create the SQL query
-        $query = "INSERT INTO `file` (`username`,`team`,`name`, `mime`, `size`, `data`, `created`) VALUES ('{$username}','{$team}','{$name}', '{$mime}', {$size}, '{$data}', NOW())";
-        
+        $stmt = $dbLink->prepare("INSERT INTO `file` (`username`,`team`,`name`, `mime`, `size`, `data`, `created`) VALUES (?,?,?,?,?,?,NOW())");
+        $stmt->bind_param('sssssb', $username, $team, $name, $mime, $size, $data);
+
         // Execute the query
-        $result = $dbLink->query($query);
+        $result = $stmt->execute();
 
         // Check if it was successfull
        

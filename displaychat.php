@@ -9,8 +9,10 @@ exit;
 }
 $conn = db_connect();
 
-$sql = "SELECT * from team where username='$username'";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * from team where username=?");
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
 
 
 

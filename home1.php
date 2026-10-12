@@ -8,8 +8,10 @@ exit;
 }
 $conn = db_connect();
 
-$sql = "SELECT email, education, university FROM enc where username = '$username'";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT email, education, university FROM enc where username = ?");
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
 
 
 ?>
