@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
 session_start();
-$_SESSION['username'] = $_POST['username'];
 date_default_timezone_set("America/Los_Angeles");
 $time = date('Y/m/d g:i:s A');
 $conn = db_connect();
@@ -17,6 +16,7 @@ if(isset($_POST['username']))
 	if($res && $res->num_rows==1)
  {
 // Set username session variable
+$_SESSION['username'] = $username;
 
 $query = "INSERT INTO log (username,time) VALUES ('$username','$time')";
        $data = $conn->query($query) or die($conn->error);
