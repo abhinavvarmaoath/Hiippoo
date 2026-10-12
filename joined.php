@@ -5,6 +5,7 @@ $username = $_SESSION['username'];
 $team=$_POST['team'];
 if (!isset($_SESSION['username'])) {
 header('Location: joined.php');
+exit;
 }
 $dbLink = db_connect();
 $query1 = "INSERT INTO `team` (`username`,`team`) VALUES ('{$username}','{$team}')";

@@ -5,6 +5,7 @@ $teamid = $_GET['teamid'];
 $_SESSION["team"] = $teamid;
 if (!isset($_SESSION['username'])) {
 header('Location: chatroom1.php');
+exit;
 }
 ?>
 <!DOCTYPE html>

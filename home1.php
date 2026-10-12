@@ -4,6 +4,7 @@ session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
 header('Location: home1.php');
+exit;
 }
 $conn = db_connect();
 

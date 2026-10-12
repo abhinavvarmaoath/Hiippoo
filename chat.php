@@ -9,6 +9,7 @@ session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
 header('Location: chat.php');
+exit;
 }
 
 ?>

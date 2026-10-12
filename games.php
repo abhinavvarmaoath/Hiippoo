@@ -3,6 +3,7 @@ session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
 header('Location: games.php');
+exit;
 }
 ?>
 <!DOCTYPE html>

@@ -7,6 +7,7 @@ session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
 header('Location: team.php');
+exit;
 }
 $conn = db_connect();
 

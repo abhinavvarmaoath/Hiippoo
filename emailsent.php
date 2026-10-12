@@ -4,6 +4,7 @@ session_start();
 $username = $_SESSION['username'];
 if (!isset($_SESSION['username'])) {
 header('Location: emailsent.php');
+exit;
 }
 $conn = db_connect();
 $email    = $_POST['email'];

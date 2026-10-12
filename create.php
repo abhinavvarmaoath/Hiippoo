@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['username'])) {
 header('Location: create.php');
+exit;
 }
 ?>
 <!DOCTYPE html>

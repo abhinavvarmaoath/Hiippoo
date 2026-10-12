@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['username'])) {
 header('Location: join.php');
+exit;
 }
 ?>
 <!DOCTYPE html>
