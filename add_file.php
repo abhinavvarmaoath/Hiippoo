@@ -322,6 +322,22 @@ if(isset($_FILES['uploaded_file'])) {
                           <li><a class="" href="email.php">Get in touch</a></li>
                       </ul>
                   </li>
+ <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon_gps"></i>Location Tracking<span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="location.php">Location</a></li>
+                      </ul>
+                  </li>
+ <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="\f043"></i>Games<span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="games.php">Games</a></li>
+                      </ul>
+                  </li>
                        
               <!-- sidebar menu end-->
           </div>
@@ -450,7 +466,7 @@ echo '<p>Click <a href="displayteam.php">here</a> Team</p>';
 	        normalizeFunction: 'polynomial'
 	      }]
 	    },
-		backgroundColor: '#ffffff',
+		backgroundColor: '#eef3f7',
 	    onLabelShow: function(e, el, code){
 	      el.html(el.html()+' (GDP - '+gdpData[code]+')');
 	    }
