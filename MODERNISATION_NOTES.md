@@ -22,13 +22,14 @@ no real users or data. Plain procedural PHP, no framework, no build step.
   is shared) — only from the tree going forward.
 - **`videocall.php` sidebar link**: removed outright (user chose this over
   stubbing it).
-- **Scope approved**: safety net (schema, tests, CI, Docker), the
-  non-behavioral security fixes, the PHP 8.x runtime port, dropping unused
-  vendored libraries, and the password-hashing migration. Not approved/not
-  attempted: dedup refactor of the repeated header/sidebar/DB-connect
-  boilerplate, join-team semantics (anyone who types an existing team name
-  joins it — flagged, not changed, needs a product decision), any UI
-  framework upgrade.
+- **Scope approved (first batch)**: safety net (schema, tests, CI,
+  Docker), the non-behavioral security fixes, the PHP 8.x runtime port,
+  dropping unused vendored libraries, and the password-hashing migration.
+- **Scope approved (second batch)**: fix join-team semantics (create and
+  join now behave differently; still no invite/approval step — that's
+  the approved semantics, not a gap), the dedup refactor, CSRF on the
+  three static `.html` entry points, and the Bootstrap 3 → 5 / jQuery
+  1.x → 3.x upgrade. See "Second batch: approved follow-ups" below.
 
 ## What was done (see git log for full detail per commit)
 
@@ -94,25 +95,97 @@ in a normal environment — the committed CI workflow should work fine on
 GitHub Actions since it isn't subject to the same rate limit. Worth an
 early check next session: does CI actually go green.
 
+## Second batch: approved follow-ups
+
+Four more items approved, all implemented this session:
+
+**Join-team semantics.** `created.php` now rejects if the team name
+already exists (was silently joining the existing team instead of
+creating a new one); `joined.php` now rejects if the team doesn't exist,
+or if the user is already a member. Create and join are now genuinely
+different operations. This is still not an invite/approval system —
+anyone who knows or guesses a team name can still join it outright. That
+was explicitly in scope ("anyone who types an existing team name joins
+it, no invite/approval" was the approved semantics); a real invite flow
+would be a separate, bigger feature.
+
+**Dedup refactor.** Before extracting anything, standardized the
+pages' sidebars so the dedup would be a pure move with no behavior
+encoded in it: 6 of 15 pages (`add_file`, `chatroom`, `created`, `joined`,
+`list_files`, `test`) were missing the "Location Tracking" and "Games"
+nav items the other 9 had — copy-paste drift, not deliberate — added them
+everywhere; also normalized a dead dashboard-map config's
+`backgroundColor` (split 10/5 between two near-identical hex values
+across pages) to the majority value. Then extracted the repeated
+~300-line header/sidebar/footer block into `partials/head.php`,
+`partials/sidebar.php`, `partials/footer.php`, included from those 14
+pages (and just the sidebar from `location.php` — see below). Each page
+dropped to under 100 lines, with no further behavior change — this part
+was purely moving now-identical markup into one place.
+
+**CSRF on signup.html/login.html/email.html.** Converted all three to
+`signup_form.php`/`login_form.php`/`email_form.php`, each starting with
+`session_start()` + `require_once csrf.php` and a `csrf_field()` call
+inside the form; `login.php`/`signup.php`/`emailsent.php` now call
+`csrf_verify()` before acting on the POST. Updated every link that
+pointed at the old `.html` filenames (`index.html`, sidebar nav).
+`email.html` turned out to already be unreachable from anywhere in the
+live app before this change — the "Get in touch" sidebar link has always
+pointed at `email.php`, a separate, already-PHP contact form that also
+posts to `emailsent.php`. Converting `email.html` was still worth doing
+(matches the other two, and `emailsent.php` is shared), but doing so
+added `csrf_verify()` to `emailsent.php` without giving `email.php` a
+matching `csrf_field()` — which broke the one copy of this form real
+users actually reach. Caught by testing the live sidebar path instead of
+just the newly-converted one, fixed in a follow-up commit
+("Fix contact form CSRF token mismatch").
+
+**Bootstrap 3 → 5, jQuery 1.x → 3.7.1.** Swapped `js/jquery.js`,
+`css/bootstrap.min.css`, `js/bootstrap.min.js` (now the Popper-inclusive
+bundle, needed for dropdown positioning). Before touching any compat
+code, grepped every page for the CSS class/ID each "plugin" call
+targets: knob, owl carousel, custom-select, vectormap, jquery-ui,
+easy-pie-chart, sparklines, fullcalendar, xcharts, chart-master, morris,
+autosize, placeholder, rateit, slimscroll all turned out to target
+elements that don't exist anywhere in the app — already fully dead, no
+compat work needed. Two call sites were real and did need fixing for
+Bootstrap 5's removal of its jQuery plugin API: `scripts.js`'s tooltip
+init (`.tooltip()` → `new bootstrap.Tooltip(el)`; the popover call was
+dropped, dead) and `creative.js`'s `scrollspy()`/`affix()` calls on
+`index.html`, which targeted nonexistent elements but *threw*, which
+silently broke the real WOW.js scroll animations running right after
+them in the same script — found by loading pages in an actual browser
+and watching the console, not just diffing HTML. Verified dropdown,
+tooltip, and WOW.js animations all work under Bootstrap 5 via Playwright
+(click/hover interaction, not just "no console errors"). Then removed
+~30 now-fully-dead vendored files/directories (`assets/chart-master/`,
+`assets/fullcalendar/`, `assets/jquery-easy-pie-chart/`,
+`assets/jquery-knob/`, old jQuery/jQuery UI builds, IE8 shims, and the
+rest of the dead-plugin list) as a separate commit. `location.php` was
+the one page not covered by the dedup refactor (it's a stray, already
+broken in several unrelated ways — duplicate `<body>` tags, links to an
+`assets/` tree that doesn't exist in this repo — clearly an abandoned
+half-finished page from the original project) and still had its own
+copy of every dead-plugin tag plus an inline init block; stripped those
+too, verified its (pre-existing, unrelated) breakage is unchanged.
+
 ## Open questions / not done
 
-- **Join-team semantics**: `created.php`/`joined.php` both just insert a
-  `(username, team)` row — anyone who knows or guesses a team name joins
-  it outright, no invite or approval. Flagged in Phase 2, never got an
-  explicit decision. Needs product input before changing.
-- **CSRF on signup.html/login.html/email.html**: these are static `.html`,
-  not PHP, so a session token can't be embedded without converting them to
-  `.php` and fixing every link that points at the old filenames. Judged
-  lower value anyway (signup/login CSRF has little attack value here; the
-  contact form just sends an email) and left alone. Revisit if that
-  reasoning doesn't hold up.
-- **Dedup refactor**: the ~15 template pages still each paste the same
-  ~300-line header/sidebar/footer and repeat `db_connect()` boilerplate.
-  Flagged as a high-value, low-risk refactor in Phase 2; not started.
-- **Bootstrap 3 → 5, jQuery 1.x → 3.x**: flagged, not started — this is a
-  real UI effort, not a quick fix, and nobody's asked for it yet.
 - **File storage in MySQL BLOBs**: noted in `schema.sql` as a scalability
   ceiling, not something to fix without a reason to.
+- **`location.php`**: reachable from the sidebar ("Location Tracking") but
+  was already broken before this session in ways out of scope for
+  anything approved so far — malformed HTML (three `<body>` tags, looks
+  like two or three unrelated page templates pasted together), and
+  several `<script>`/`<link>` tags pointing at an `assets/bootstrap/`,
+  `assets/wow/`, `assets/uniform/` etc. tree that doesn't exist anywhere
+  in this repo (404s today, probably always has). Only touched its dead
+  jQuery-plugin references as part of the Bootstrap/jQuery upgrade above;
+  everything else about it is pre-existing and untouched.
+- **`chat.php`**: a second, unreachable chat-entry page (not linked from
+  anywhere) whose form posts to `chatroom.php` with fields `chatroom.php`
+  never reads. Dead, like `email_form.php`'s lack of inbound links — left
+  alone, same reasoning as `location.php`.
 
 ## What's left to do
 
