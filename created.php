@@ -10,10 +10,18 @@ csrf_verify();
 $username = $_SESSION['username'];
 $team=$_POST['team'];
 $dbLink = db_connect();
-$stmt = $dbLink->prepare("INSERT INTO `team` (`username`,`team`) VALUES (?,?)");
-$stmt->bind_param('ss', $username, $team);
-        // Execute the query
- $result1 = $stmt->execute();
+$existsStmt = $dbLink->prepare("SELECT 1 FROM team WHERE team = ? LIMIT 1");
+$existsStmt->bind_param('s', $team);
+$existsStmt->execute();
+$teamExists = $existsStmt->get_result()->num_rows > 0;
+if ($teamExists) {
+    $result1 = false;
+} else {
+    $stmt = $dbLink->prepare("INSERT INTO `team` (`username`,`team`) VALUES (?,?)");
+    $stmt->bind_param('ss', $username, $team);
+            // Execute the query
+     $result1 = $stmt->execute();
+}
 ?>
 
 <!DOCTYPE html>
@@ -322,7 +330,10 @@ $stmt->bind_param('ss', $username, $team);
 </style>
 <h1>
 <?php
-        if($result1) {
+        if ($teamExists) {
+            echo 'Error! A team named "' . htmlspecialchars($team) . '" already exists. Join it instead, or pick a different name.';
+        }
+        elseif($result1) {
             echo 'Team Created!';
         }
         else {
