@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
+session_start();
 $conn = db_connect();
       function NewUser() {
        global $conn;
@@ -13,7 +15,7 @@ $conn = db_connect();
        $stmt->bind_param('sssss', $username, $password, $email, $education, $university);
        $data = $stmt->execute() or die($conn->error);
        if($data) {
-header("Location: http://www.hiippoo.com/login.html");
+header("Location: http://www.hiippoo.com/login_form.php");
  }
 
 }
@@ -21,12 +23,13 @@ function SignUp()
        {
 if(!empty($_POST['username']))
  {
+  csrf_verify();
   global $conn;
   $stmt = $conn->prepare("SELECT * FROM enc WHERE username = ?");
   $stmt->bind_param('s', $_POST['username']);
   $stmt->execute();
   $query = $stmt->get_result();
-header("Location: http://www.hiippoo.com/signup.html");
+header("Location: http://www.hiippoo.com/signup_form.php");
 
 if(!$row = $query->fetch_array() or die($conn->error))
 {

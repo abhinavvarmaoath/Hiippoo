@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
 session_start();
 date_default_timezone_set("America/Los_Angeles");
 $time = date('Y/m/d g:i:s A');
@@ -7,6 +8,7 @@ $conn = db_connect();
 $row = false;
 if(isset($_POST['username']))
 {
+	csrf_verify();
 	$username=$_POST['username'];
 	$password=$_POST['password'];
 	$stmt = $conn->prepare("SELECT * FROM enc WHERE username=? LIMIT 1");
@@ -32,6 +34,6 @@ $stmt = $conn->prepare("INSERT INTO log (username,time) VALUES (?,?)");
 else
 {
 // Jump to login page
-header('Location: signup.html');
+header('Location: signup_form.php');
 }
 ?>

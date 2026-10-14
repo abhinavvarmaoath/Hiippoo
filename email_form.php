@@ -1,17 +1,22 @@
+<?php
+session_start();
+require_once __DIR__ . '/csrf.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-  <h1>Get in touch</h1> 
+  <h1>Get in touch</h1>
 
 </head>
 
 <body>
-   
+
     <header id="top" class="header">
         <div class="text-vertical-center">
-<<form method="POST"  name='email' action="emailsent.php">
+<form method="POST"  name='email' action="emailsent.php">
+<?php echo csrf_field(); ?>
 <ul>
 <ul><label for="subject">Complaint Subject</label></ul>
 <ul><input type="text" name="subject" size="50" /></ul>

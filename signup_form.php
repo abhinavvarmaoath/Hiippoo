@@ -1,25 +1,30 @@
+<?php
+session_start();
+require_once __DIR__ . '/csrf.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
 <style>
-form { 
+form {
 
-left:80%; 
+left:80%;
 width:250px;
 }
 body{
 background-image: url("bg.jpg");
 
 }
-</style>   
+</style>
 </head>
 
 <body>
 
 <h1>SignUp</h1>
 <form method="POST"  name='registration'  action="signup.php">
+<?php echo csrf_field(); ?>
 <ul><b>
 <ul><label for="username">User id:</label></ul>
 <ul><input type="text" name="username" required size="50" /></ul>
@@ -39,7 +44,7 @@ background-image: url("bg.jpg");
         </div>
     </header>
 
-  
+
 
 </body>
 
