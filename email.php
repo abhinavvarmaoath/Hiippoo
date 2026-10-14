@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/csrf.php';
 if (!isset($_SESSION['username'])) {
 header('Location: join.php');
 exit;
@@ -27,6 +28,7 @@ exit;
  
  <div align="center">       
 <form method="POST"  name='email' action="emailsent.php">
+<?php echo csrf_field(); ?>
 <ul>
 <ul><label for="subject">Complaint Subject</label></ul>
 <ul><input type="text" name="subject" size="100" /></ul>
