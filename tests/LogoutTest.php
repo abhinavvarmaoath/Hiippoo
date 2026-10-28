@@ -13,10 +13,7 @@ final class LogoutTest extends TestCase
         Fixtures::reset();
         $base = AppServer::baseUrl();
         $cookie = null;
-        Http::post($base . '/login.php', [
-            'username' => 'fixture_alice',
-            'password' => 'alicepw',
-        ], $cookie);
+        Http::login($base, 'fixture_alice', 'alicepw', $cookie);
 
         $before = Http::get($base . '/home1.php', $cookie);
         $this->assertStringContainsString('alice@example.test', $before['body']);

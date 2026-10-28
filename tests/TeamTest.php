@@ -9,21 +9,22 @@ use Tests\Support\Http;
 final class TeamTest extends TestCase
 {
     private ?string $cookie = null;
+    private string $token = '';
 
     protected function setUp(): void
     {
         Fixtures::reset();
         $this->cookie = null;
-        Http::post(AppServer::baseUrl() . '/login.php', [
-            'username' => 'fixture_alice',
-            'password' => 'alicepw',
-        ], $this->cookie);
+        $this->token = Http::login(AppServer::baseUrl(), 'fixture_alice', 'alicepw', $this->cookie)['token'];
     }
 
     public function testCreateTeamThenListedOnDisplayTeam(): void
     {
         $base = AppServer::baseUrl();
-        $created = Http::post($base . '/created.php', ['team' => Fixtures::TEAM], $this->cookie);
+        $created = Http::post($base . '/created.php', [
+            'team' => Fixtures::TEAM,
+            'csrf_token' => $this->token,
+        ], $this->cookie);
         $this->assertSame(200, $created['status']);
         $this->assertStringContainsString('Team Created!', $created['body']);
 
