@@ -1,40 +1,39 @@
 <?php
+require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/csrf.php';
 session_start();
-$_SESSION['username'] = $_POST['username'];
 date_default_timezone_set("America/Los_Angeles");
-$host="localhost";
-$user="abhi7565";
-$password="Qweasdzxc1";
-$db="abregdb"; 
-$time =date( 'Y/m/d g:i:s A');
-mysql_connect($host, $user, $password);
-mysql_select_db($db);
+$time = date('Y/m/d g:i:s A');
+$conn = db_connect();
+$row = false;
 if(isset($_POST['username']))
 {
+	csrf_verify();
 	$username=$_POST['username'];
 	$password=$_POST['password'];
-        $password = md5($password);
-	$sql="SELECT * FROM enc WHERE username='".$username."' AND password='".$password."' LIMIT 1";
-	$res=mysql_query($sql);
+	$stmt = $conn->prepare("SELECT * FROM enc WHERE username=? LIMIT 1");
+	$stmt->bind_param('s', $username);
+	$stmt->execute();
+	$res = $stmt->get_result();
+	$row = $res->fetch_assoc();
+	if ($row && !password_verify($password, $row['password'])) {
+	    $row = false;
+	}
 }
-	if(mysql_num_rows($res)==1)
+	if($row)
  {
 // Set username session variable
+$_SESSION['username'] = $username;
 
-
-
-mysql_connect($host, $user, $password);
-mysql_select_db($db);
-
-
-$query = "INSERT INTO log (username,time) VALUES ('$username','$time')";
-       $data = mysql_query ($query)or die(mysql_error()); 
+$stmt = $conn->prepare("INSERT INTO log (username,time) VALUES (?,?)");
+       $stmt->bind_param('ss', $username, $time);
+       $data = $stmt->execute() or die($conn->error);
 
  header('Location: home1.php');
 }
 else
 {
 // Jump to login page
-header('Location: signup.html');
+header('Location: signup_form.php');
 }
 ?>

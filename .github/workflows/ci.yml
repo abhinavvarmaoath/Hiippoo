@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: test-root-password
+          MARIADB_DATABASE: hiippoo
+          MARIADB_USER: hiippoo
+          MARIADB_PASSWORD: test-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli
+          tools: composer
+
+      - run: composer install --no-interaction --prefer-dist
+
+      # The runner image has no mariadb client. --skip-ssl keeps newer
+      # clients from trying to verify a certificate on the service container.
+      - name: Install MariaDB client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends mariadb-client
+
+      - name: Load schema
+        run: mariadb --skip-ssl -h127.0.0.1 -uroot -ptest-root-password < schema.sql
+
+      - run: composer run lint
+
+      - run: composer run stan
+
+      - name: Run tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_NAME: hiippoo
+          DB_USER: hiippoo
+          DB_PASSWORD: test-password
+        run: composer run test
