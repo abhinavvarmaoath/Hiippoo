@@ -14,9 +14,14 @@ final class Fixtures
         $conn->query("DELETE FROM team WHERE team = '" . self::TEAM . "'");
         $conn->query("DELETE FROM messages WHERE team = '" . self::TEAM . "'");
         $conn->query("DELETE FROM file WHERE team = '" . self::TEAM . "'");
-        $username = 'fixture_alice';
-        $hash = password_hash('alicepw', PASSWORD_ARGON2ID);
-        $email = 'alice@example.test';
+        self::addUser($conn, 'fixture_alice', 'alicepw', 'alice@example.test');
+        self::addUser($conn, 'fixture_bob', 'bobpw', 'bob@example.test');
+        return $conn;
+    }
+
+    private static function addUser(\mysqli $conn, string $username, string $password, string $email): void
+    {
+        $hash = password_hash($password, PASSWORD_ARGON2ID);
         $education = 'BSc';
         $university = 'SJSU';
         $stmt = $conn->prepare(
@@ -24,6 +29,5 @@ final class Fixtures
         );
         $stmt->bind_param('sssss', $username, $hash, $email, $education, $university);
         $stmt->execute();
-        return $conn;
     }
 }
