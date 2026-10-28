@@ -95,6 +95,35 @@ in a normal environment — the committed CI workflow should work fine on
 GitHub Actions since it isn't subject to the same rate limit. Worth an
 early check next session: does CI actually go green.
 
+## CI and tests: what the first real check found
+
+It didn't go green, and neither did the tests. The manual `curl` passes
+above couldn't have shown either:
+
+- CI had failed on every push since it was added, at the "Load schema"
+  step (`mariadb: command not found` — the runner image has no mariadb
+  client), so lint, PHPStan and PHPUnit had never run there. Fixed by
+  installing the client first.
+- All seven characterization tests were failing. They predate the CSRF
+  commit and never sent a token, and two asserted the old `login.html` /
+  `signup.html` redirects. So the history from the CSRF commit onward has
+  commits where the suite was red. Updated, and extended to cover the
+  create/join rules, CSRF rejection and the contact-form token (the one
+  regression that had only been caught by hand).
+- PHPStan (level 2) found two real bugs once it actually ran:
+  `add_file.php` fataled on any failed upload (`$dbLink->close()` ran
+  outside the branch that opens the connection), and the shared header
+  printed a blank username on `create.php`/`join.php`/`email.php`, which
+  never defined `$username` (pre-existing — their old inline headers had
+  the same gap). Both fixed, each with a regression test.
+
+How this was verified: composer still can't authenticate to GitHub from
+the sandbox, so lint, PHPStan and PHPUnit were run locally with
+substitutes — PHPUnit 9.6.17 from apt and the PHPStan 2.3.3 phar from the
+official release — rather than the versions CI installs from
+`composer.lock` (PHPUnit 12.5, PHPStan 2.3.1). The tests only use basic
+assertions, but CI remains the real check.
+
 ## Second batch: approved follow-ups
 
 Four more items approved, all implemented this session:
@@ -190,5 +219,4 @@ too, verified its (pre-existing, unrelated) breakage is unchanged.
 ## What's left to do
 
 Nothing from the approved scope is outstanding. Next steps are whichever
-of the open items above get approved, plus confirming CI actually passes
-once it runs somewhere with normal GitHub access.
+of the open items above get approved.
