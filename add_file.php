@@ -61,14 +61,14 @@ if(isset($_FILES['uploaded_file'])) {
             echo 'Error! Failed to insert the file'
                . "<pre>{$dbLink->error}</pre>";
         }
+
+        // Close the mysql connection
+        $dbLink->close();
     }
     else {
         echo 'An error accured while the file was being uploaded. '
            . 'Error code: '. intval($_FILES['uploaded_file']['error']);
     }
- 
-    // Close the mysql connection
-    $dbLink->close();
 }
 else {
     echo 'Error! A file was not sent!';

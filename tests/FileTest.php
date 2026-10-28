@@ -24,24 +24,31 @@ final class FileTest extends TestCase
         Http::get($base . '/list_files.php?teamid=' . Fixtures::TEAM, $this->cookie);
     }
 
-    public function testUploadedFileListedAndDownloadable(): void
+    // Extra fields go ahead of the file, which is the order PHP needs for
+    // MAX_FILE_SIZE to apply to it.
+    private function upload(string $name, string $contents, array $extraFields = []): string
     {
-        $base = AppServer::baseUrl();
         $tmp = tempnam(sys_get_temp_dir(), 'up');
-        file_put_contents($tmp, 'hello file contents');
+        file_put_contents($tmp, $contents);
 
-        $ch = curl_init($base . '/add_file.php');
+        $ch = curl_init(AppServer::baseUrl() . '/add_file.php');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookie);
         curl_setopt($ch, CURLOPT_COOKIEJAR, $this->cookie);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, [
-            'csrf_token' => $this->token,
-            'uploaded_file' => new \CURLFile($tmp, 'text/plain', 'hello.txt'),
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ['csrf_token' => $this->token] + $extraFields + [
+            'uploaded_file' => new \CURLFile($tmp, 'text/plain', $name),
         ]);
-        $upload = curl_exec($ch);
+        $response = curl_exec($ch);
         curl_close($ch);
         unlink($tmp);
+        return $response;
+    }
+
+    public function testUploadedFileListedAndDownloadable(): void
+    {
+        $base = AppServer::baseUrl();
+        $upload = $this->upload('hello.txt', 'hello file contents');
         $this->assertStringContainsString('Success', $upload);
 
         $list = Http::get($base . '/list_files.php?teamid=' . Fixtures::TEAM, $this->cookie);
@@ -51,5 +58,14 @@ final class FileTest extends TestCase
         $this->assertNotEmpty($m, 'download link not found in file list');
         $download = Http::get($base . '/get_file.php?id=' . $m[1], $this->cookie);
         $this->assertSame('hello file contents', $download['body']);
+    }
+
+    public function testFailedUploadReportsTheErrorAndStillFinishesThePage(): void
+    {
+        $response = $this->upload('too-big.txt', 'longer than the ten byte limit', ['MAX_FILE_SIZE' => '10']);
+
+        $this->assertStringContainsString('Error code: 2', $response);
+        // This closing link is only reached if the script didn't fatal first.
+        $this->assertStringContainsString('Click <a href="displayteam.php">here</a> Team', $response);
     }
 }
