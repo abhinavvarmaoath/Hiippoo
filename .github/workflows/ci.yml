@@ -35,8 +35,13 @@ jobs:
 
       - run: composer install --no-interaction --prefer-dist
 
+      # The runner image has no mariadb client. --skip-ssl keeps newer
+      # clients from trying to verify a certificate on the service container.
+      - name: Install MariaDB client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends mariadb-client
+
       - name: Load schema
-        run: mariadb -h127.0.0.1 -uroot -ptest-root-password < schema.sql
+        run: mariadb --skip-ssl -h127.0.0.1 -uroot -ptest-root-password < schema.sql
 
       - run: composer run lint
 
