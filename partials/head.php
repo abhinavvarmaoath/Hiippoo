@@ -200,7 +200,7 @@
                     <!-- alert notification end-->
                     <!-- user login dropdown start-->
                     <li class="dropdown">
-                        <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($username); ?></span>
+                        <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#"><span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
